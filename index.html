@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Cat Dental Quiz</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: linear-gradient(180deg, #ffeef2, #ffffff);
+      text-align: center;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    p {
+      color: #666;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 12px;
+      border: none;
+      background: #ff8fab;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    img {
+      width: 160px;
+      border-radius: 15px;
+      margin-top: 10px;
+    }
+
+    .result-card {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 20px;
+      background: #fff0f5;
+    }
+
+    .type {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .desc {
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    .branding {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .ig-btn {
+      background: black;
+    }
+
+    .share-btn {
+      background: #833AB4;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>คุณเป็นแมวสายดูแลฟันแบบไหน 🐱</h1>
+  <p id="intro">ลองทำ quiz นี้ แล้วดูว่าคุณเป็นแมวสีอะไร!</p>
+
+  <button id="startBtn" onclick="startQuiz()">เริ่มทำแบบทดสอบ</button>
+
+  <p id="question"></p>
+  <div id="choices"></div>
+
+  <!-- 🔥 RESULT CARD -->
+  <div id="resultCard" class="card" style="display:none;">
+    <div class="result-card">
+      <div class="type" id="typeText"></div>
+      <img id="catImage" src="">
+      <div class="desc" id="descText"></div>
+
+      <div class="branding">
+        @yourpage 🐱✨<br>
+        แชร์ผลลัพธ์ของคุณ!
+      </div>
+    </div>
+  </div>
+
+  <a id="igLink" href="#" target="_blank">
+    <button class="ig-btn" style="display:none;">ไปดู IG ชมรม 🐱</button>
+  </a>
+
+  <button id="shareBtn" class="share-btn" style="display:none;" onclick="shareResult()">
+    แชร์ลง IG Story 📸
+  </button>
+
+</div>
+
+<script>
+  let score = 0;
+  let currentQuestion = 0;
+
+  const questions = [
+    {
+      question: "คุณแปรงฟันบ่อยแค่ไหน?",
+      choices: [
+        { text: "วันละ 2 ครั้ง 😇", value: 1 },
+        { text: "วันละครั้ง 😐", value: 2 },
+        { text: "นาน ๆ ที 😈", value: 3 }
+      ]
+    },
+    {
+      question: "คุณใช้ไหมขัดฟันมั้ย?",
+      choices: [
+        { text: "ใช้ประจำ 🦷", value: 1 },
+        { text: "บางครั้ง 😅", value: 2 },
+        { text: "ไม่เคยเลย 😈", value: 3 }
+      ]
+    },
+    {
+      question: "ไปหาหมอฟันบ่อยแค่ไหน?",
+      choices: [
+        { text: "ทุก 6 เดือน 😇", value: 1 },
+        { text: "ปีละครั้ง 😐", value: 2 },
+        { text: "ไม่ค่อยไป 😈", value: 3 }
+      ]
+    }
+  ];
+
+  function startQuiz() {
+    score = 0;
+    currentQuestion = 0;
+
+    document.getElementById("intro").innerText = "";
+    document.getElementById("startBtn").style.display = "none";
+    document.getElementById("resultCard").style.display = "none";
+    document.getElementById("shareBtn").style.display = "none";
+
+    showQuestion();
+  }
+
+  function showQuestion() {
+    let q = questions[currentQuestion];
+    document.getElementById("question").innerText = q.question;
+
+    let choicesHTML = "";
+    q.choices.forEach(choice => {
+      choicesHTML += `<button onclick="answer(${choice.value})">${choice.text}</button>`;
+    });
+
+    document.getElementById("choices").innerHTML = choicesHTML;
+  }
+
+  function answer(value) {
+    score += value;
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    document.getElementById("question").innerText = "";
+    document.getElementById("choices").innerHTML = "";
+
+    let type = "";
+    let desc = "";
+    let imageUrl = "";
+
+    if (score <= 4) {
+      type = "🐱 แมวขาวสายเป๊ะ";
+      desc = "✨ ดูแลฟันดีมาก เป๊ะทุกขั้นตอน\n🦷 หมอฟันรักคุณแน่นอน";
+      imageUrl = "https://images.unsplash.com/photo-1574158622682-e40e69881006";
+    } else if (score <= 6) {
+      type = "🐱 แมวเทาสายชิล";
+      desc = "😶 ดูแลฟันบ้าง ไม่บ้าง\n📈 ยังพัฒนาได้อีก!";
+      imageUrl = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6";
+    } else {
+      type = "🐱 แมวส้มสายดื้อ";
+      desc = "🔥 ไม่ค่อยแปรงฟัน\n😈 เสี่ยงฟันพังนะ!";
+      imageUrl = "https://images.unsplash.com/photo-1543852786-1cf6624b9987";
+    }
+
+    document.getElementById("typeText").innerText = type;
+    document.getElementById("descText").innerText = desc;
+
+    let img = document.getElementById("catImage");
+    img.src = imageUrl;
+
+    document.getElementById("resultCard").style.display = "block";
+
+    let ig = document.getElementById("igLink");
+    ig.href = "https://instagram.com/yourpage";
+    ig.querySelector("button").style.display = "block";
+
+    document.getElementById("shareBtn").style.display = "block";
+  }
+
+  function shareResult() {
+    alert("📸 แคปการ์ดนี้ แล้วแชร์ลง IG Story ได้เลย!\nอย่าลืมแท็ก @yourpage 🐱✨");
+  }
+</script>
+
+</body>
+</html>
